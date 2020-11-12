@@ -3,16 +3,15 @@ package main;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Optimizer implements OptimizerInterface {
 
     private BoardInterface board;
+    private Object[][] lockers;
     private ExecutorService executorService;
-    private Set<Thread> movers;
+    private Set<PawnMover> movers;
     private int meetingPointX;
     private int meetingPointY;
 
@@ -20,43 +19,63 @@ public class Optimizer implements OptimizerInterface {
     public void setBoard(BoardInterface board) {
         this.board = board;
 
-        this.executorService = Executors.newFixedThreadPool(this.board.getSize());
-        this.meetingPointX = board.getMeetingPointRow();
-        this.meetingPointY = board.getMeetingPointCol();
+        this.meetingPointX = board.getMeetingPointCol();
+        this.meetingPointY = board.getMeetingPointRow();
         this.movers = new HashSet<>();
+        this.lockers = new Object[this.board.getSize()][this.board.getSize()];
 
         for(int i = 0; i < board.getSize(); i++) {
             for(int j = 0; j < board.getSize(); j++) {
-                Optional<PawnInterface> pawn;
-                try {
-                    pawn = this.board.get(i,j);
-                    if(pawn.isPresent()) {
-                        PawnMover pawnMover = new PawnMover(pawn.get(), i , j);
-                        pawnMover.setName("Watek: " + pawn.get().getID());
-                        try {
-                            pawnMover.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        movers.add(pawnMover);
-                        pawn.get().registerThread(pawnMover);
+                this.lockers[i][j] = new Object();
+                Optional<PawnInterface> pawn = this.board.get(i,j);
+
+                if(pawn.isPresent()) {
+                    PawnMover pawnMover = new PawnMover(pawn.get(), i , j);
+                    pawnMover.setName("Watek: " + pawn.get().getID());
+                    pawnMover.setSuspended(false);
+                    try {
+                        pawnMover.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (NullPointerException e) {}
+                    movers.add(pawnMover);
+                    pawn.get().registerThread(pawnMover);
+                }
             }
         }
 
+        this.executorService = Executors.newFixedThreadPool(movers.size());
+        System.out.println(movers.size());
+
         board.optimizationStart();
         movers.forEach(thread -> executorService.execute(thread));
+
+//        executorService.shutdown();
+
+//        boolean finished = false;
+//
+//        while(!finished) {
+//            for(Thread thread: movers) {
+//                System.out.println(thread.getState());
+//                if(thread.isAlive())
+//                    break;
+//                finished = true;
+//                board.optimizationDone();
+//            }
+//        }
+
     }
 
     @Override
     public void suspend() {
-        executorService.shutdownNow();
+        movers.forEach(PawnMover::suspendThread);
+//        movers.forEach(thread -> System.out.println(thread.getState()));
     }
 
     @Override
     public void resume() {
-
+        movers.forEach(PawnMover::resumeThread);
+//        movers.forEach(thread -> System.out.println(thread.getState()));
     }
 
     private class PawnMover extends Thread {
@@ -64,7 +83,8 @@ public class Optimizer implements OptimizerInterface {
         private PawnInterface pawn;
         private int currentPositionX;
         private int currentPositionY;
-
+        private Boolean suspended;
+        private final Object lock = new Object();
 
         PawnMover(PawnInterface pawn, int currentPositionX, int currentPositionY) {
             this.pawn = pawn;
@@ -74,52 +94,147 @@ public class Optimizer implements OptimizerInterface {
 
         @Override
         public void run() {
-            while(isMovePossible()) {
-                if(this.currentPositionY == meetingPointY) {
-                    if(this.currentPositionX <= meetingPointX) {
-                        this.currentPositionX = pawn.moveRight();
-                    } else {
-                        this.currentPositionX = pawn.moveLeft();
+            while(true) {
+                while(suspended) {
+                    synchronized (lock) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } else if(this.currentPositionX == meetingPointX) {
-                    if(this.currentPositionY <= meetingPointY) {
-                        this.currentPositionY = pawn.moveDown();
+                }
+
+                if(this.currentPositionX == meetingPointX && this.currentPositionY == meetingPointY)
+                    break;
+
+                int x = this.currentPositionX;
+                int y = this.currentPositionY;
+
+                if(this.currentPositionX < meetingPointX) {
+                    if (this.currentPositionY < meetingPointY) {
+                        synchronized (lockers[x + 1][y]) {
+                            synchronized (lockers[x][y + 1]) {
+                                if(board.get(x + 1, y).isEmpty()) {
+                                    tryMoveRight(x + 1, y);
+                                } else if(board.get(x, y + 1).isEmpty()) {
+                                    tryMoveDown(x, y + 1);
+                                }
+                            }
+                        }
+                    } else if(this.currentPositionY > meetingPointY) {
+                        synchronized (lockers[x + 1][y]) {
+                            synchronized (lockers[x][y - 1]) {
+                                if(board.get(x + 1, y).isEmpty()) {
+                                    tryMoveRight(x + 1, y);
+                                } else if(board.get(x, y - 1).isEmpty()) {
+                                    tryMoveUp(x, y - 1);
+                                }
+                            }
+                        }
                     } else {
-                        this.currentPositionY = pawn.moveUp();
+                        synchronized (lockers[x + 1][y]) {
+                            tryMoveRight(x + 1, y);
+                        }
+                    }
+                } else if(this.currentPositionX > meetingPointX) {
+                    if (this.currentPositionY < meetingPointY) {
+                        synchronized (lockers[x - 1][y]) {
+                            synchronized (lockers[x][y + 1]) {
+                                if(board.get(x - 1, y).isEmpty()) {
+                                    tryMoveLeft(x - 1, y);
+                                } else if(board.get(x, y + 1).isEmpty()) {
+                                    tryMoveDown(x, y + 1);
+                                }
+                            }
+                        }
+                    } else if(this.currentPositionY > meetingPointY) {
+                        synchronized (lockers[x - 1][y]) {
+                            synchronized (lockers[x][y - 1]) {
+                                if(board.get(x - 1, y).isEmpty()) {
+                                    tryMoveLeft(x - 1, y);
+                                } else if(board.get(x, y - 1).isEmpty()) {
+                                    tryMoveUp(x, y - 1);
+                                }
+                            }
+                        }
+                    } else {
+                        synchronized (lockers[x - 1][y]) {
+                            tryMoveLeft(x - 1, y);
+                        }
+                    }
+                } else {
+                    if (this.currentPositionY < meetingPointY) {
+                        synchronized (lockers[x][y + 1]) {
+                            tryMoveDown(x, y + 1);
+                        }
+                    } else if(this.currentPositionY > meetingPointY) {
+                        synchronized (lockers[x][y - 1]) {
+                            tryMoveUp(x, y - 1);
+                        }
                     }
                 }
             }
         }
 
-        private boolean isMovePossible() {
-            boolean isMovePossible = false;
+        public void suspendThread(){
+            suspended = true;
+        }
 
-            if(this.currentPositionX == meetingPointX && this.currentPositionY == meetingPointY)
-                return isMovePossible;
+        public void resumeThread(){
+            suspended = false;
+            synchronized (lock) {
+                lock.notify();
+            }
+        }
 
-            if(this.currentPositionY == meetingPointY) {
-                if(this.currentPositionX <= meetingPointX) {
-                    synchronized (board.get(this.currentPositionX + 1, this.currentPositionY)) {
-                        isMovePossible = board.get(this.currentPositionX + 1, this.currentPositionY).isEmpty();
-                    }
-                } else {
-                    synchronized (board.get(this.currentPositionX - 1, this.currentPositionY)) {
-                        isMovePossible = board.get(this.currentPositionX - 1, this.currentPositionY).isEmpty();
-                    }
-                }
-            } else if(this.currentPositionX == meetingPointX) {
-                if(this.currentPositionY <= meetingPointY) {
-                    synchronized (board.get(this.currentPositionX, this.currentPositionY + 1)) {
-                        isMovePossible = board.get(this.currentPositionX, this.currentPositionY + 1).isEmpty();
-                    }
-                } else {
-                    synchronized (board.get(this.currentPositionX, this.currentPositionY - 1)) {
-                        isMovePossible = board.get(this.currentPositionX, this.currentPositionY - 1).isEmpty();
-                    }
+        public void setSuspended(boolean suspended) {
+            this.suspended = suspended;
+        }
+
+        private void tryMoveLeft(int x, int y) {
+            checkIfMovementIsPossible(x, y);
+
+            System.out.println(getName() + " przesuwam pionek w lewo");
+            this.currentPositionX = pawn.moveLeft();
+            lockers[x][y].notifyAll();
+        }
+
+        private void tryMoveRight(int x, int y) {
+            checkIfMovementIsPossible(x, y);
+
+            System.out.println(getName() + " przesuwam pionek w prawo");
+            this.currentPositionX = pawn.moveRight();
+            lockers[x][y].notifyAll();
+        }
+
+        private void tryMoveDown(int x, int y) {
+            checkIfMovementIsPossible(x, y);
+
+            System.out.println(getName() + " przesuwam pionek w dol");
+            this.currentPositionY = pawn.moveDown();
+            lockers[x][y].notifyAll();
+        }
+
+        private void tryMoveUp(int x, int y) {
+            checkIfMovementIsPossible(x, y);
+
+            System.out.println(getName() + " przesuwam pionek w gore");
+            this.currentPositionY = pawn.moveUp();
+            lockers[x][y].notifyAll();
+        }
+
+        private void checkIfMovementIsPossible(int x, int y) {
+            while(board.get(x, y).isPresent()) {
+                try {
+                    System.out.println(getName() + " czekam");
+                    lockers[x][y].wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-
-            return isMovePossible;
         }
     }
 }
+
+

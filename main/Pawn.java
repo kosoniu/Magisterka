@@ -14,7 +14,7 @@ public class Pawn implements PawnInterface {
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.board = board;
-        this.id = new Random().nextInt(board.length);
+        this.id = Integer.parseInt(xPosition + String.valueOf(yPosition));
     }
 
     @Override
@@ -58,4 +58,5 @@ public class Pawn implements PawnInterface {
     public void registerThread(Thread thread) {
         this.worker = thread;
     }
+
 }
