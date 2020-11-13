@@ -8,6 +8,8 @@ public class Board implements BoardInterface {
     private int meetingPointCol;
     private int meetingPointRow;
     private int size;
+    public boolean optimizationStarted;
+    public boolean optimizationEnded;
 
     public Board(int meetingPointCol, int meetingPointRow, int size) {
         this.meetingPointCol = meetingPointCol;
@@ -45,11 +47,13 @@ public class Board implements BoardInterface {
 
     @Override
     public void optimizationDone() {
-
+        this.optimizationEnded = true;
+        this.optimizationStarted = true;
     }
 
     @Override
     public void optimizationStart() {
-
+        this.optimizationEnded = false;
+        this.optimizationStarted = true;
     }
 }

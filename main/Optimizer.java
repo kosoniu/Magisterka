@@ -49,20 +49,25 @@ public class Optimizer implements OptimizerInterface {
 
         board.optimizationStart();
         movers.forEach(thread -> executorService.execute(thread));
+//        movers.forEach(PawnMover::start);
 
 //        executorService.shutdown();
-
+//
 //        boolean finished = false;
 //
 //        while(!finished) {
 //            for(Thread thread: movers) {
-//                System.out.println(thread.getState());
-//                if(thread.isAlive())
+//                if(thread.isAlive()) {
+//                    finished = false;
 //                    break;
+//                } else {
+//                    System.out.println(thread.getState());
+//                }
+//
 //                finished = true;
-//                board.optimizationDone();
 //            }
 //        }
+//        board.optimizationDone();
 
     }
 
@@ -119,6 +124,11 @@ public class Optimizer implements OptimizerInterface {
                                     tryMoveRight(x + 1, y);
                                 } else if(board.get(x, y + 1).isEmpty()) {
                                     tryMoveDown(x, y + 1);
+                                } else {
+                                    if(this.getState() == State.WAITING)
+                                        break;
+//                                    lockers[x][y + 1].notifyAll();
+//                                    lockers[x + 1][y].notifyAll();
                                 }
                             }
                         }
@@ -129,12 +139,20 @@ public class Optimizer implements OptimizerInterface {
                                     tryMoveRight(x + 1, y);
                                 } else if(board.get(x, y - 1).isEmpty()) {
                                     tryMoveUp(x, y - 1);
+                                } else {
+                                    if(this.getState() == State.WAITING)
+                                        break;
                                 }
                             }
                         }
                     } else {
                         synchronized (lockers[x + 1][y]) {
-                            tryMoveRight(x + 1, y);
+                            if(board.get(x + 1, y).isEmpty()) {
+                                tryMoveRight(x + 1, y);
+                            } else {
+                                if(this.getState() == State.WAITING)
+                                    break;
+                            }
                         }
                     }
                 } else if(this.currentPositionX > meetingPointX) {
@@ -145,6 +163,9 @@ public class Optimizer implements OptimizerInterface {
                                     tryMoveLeft(x - 1, y);
                                 } else if(board.get(x, y + 1).isEmpty()) {
                                     tryMoveDown(x, y + 1);
+                                } else {
+                                    if(this.getState() == State.WAITING)
+                                        break;
                                 }
                             }
                         }
@@ -155,22 +176,40 @@ public class Optimizer implements OptimizerInterface {
                                     tryMoveLeft(x - 1, y);
                                 } else if(board.get(x, y - 1).isEmpty()) {
                                     tryMoveUp(x, y - 1);
+                                } else {
+                                    if(this.getState() == State.WAITING)
+                                        break;
                                 }
                             }
                         }
                     } else {
                         synchronized (lockers[x - 1][y]) {
-                            tryMoveLeft(x - 1, y);
+                            if(board.get(x - 1, y).isEmpty()) {
+                                tryMoveLeft(x - 1, y);
+                            } else {
+                                if(this.getState() == State.WAITING)
+                                    break;
+                            }
                         }
                     }
                 } else {
                     if (this.currentPositionY < meetingPointY) {
                         synchronized (lockers[x][y + 1]) {
-                            tryMoveDown(x, y + 1);
+                            if(board.get(x - 1, y).isEmpty()) {
+                                tryMoveDown(x, y + 1);
+                            } else {
+                                if(this.getState() == State.WAITING)
+                                    break;
+                            }
                         }
-                    } else if(this.currentPositionY > meetingPointY) {
+                    } else {
                         synchronized (lockers[x][y - 1]) {
-                            tryMoveUp(x, y - 1);
+                            if(board.get(x - 1, y).isEmpty()) {
+                                tryMoveUp(x, y - 1);
+                            } else {
+                                if(this.getState() == State.WAITING)
+                                    break;
+                            }
                         }
                     }
                 }
