@@ -13,7 +13,7 @@ public class TestBoard {
 
     @Test
     public void testBoard() {
-        PawnInterface[][] pawnsBoard = new Pawn[25][25];
+        PawnInterface[][] pawnsBoard = new Pawn[10][10];
         Random random = new Random();
 
 //        pawnsBoard[0][0] = new Pawn( pawnsBoard, 0,0);
@@ -22,16 +22,16 @@ public class TestBoard {
 //        pawnsBoard[1][2] = new Pawn( pawnsBoard, 1,2);
 //        pawnsBoard[3][0] = new Pawn( pawnsBoard, 3,0);
 
-        int counter = 150;
+        int counter = 10;
 
         for(int i = 0; i < counter; i++) {
-            int x = random.nextInt(25);
-            int y = random.nextInt(25);
+            int x = random.nextInt(9);
+            int y = random.nextInt(9);
             pawnsBoard[x][y] = new Pawn( pawnsBoard, x, y);
         }
 
-        int meetingPointX = 10;
-        int meetingPointY = 10;
+        int meetingPointX = 5;
+        int meetingPointY = 5;
 
         Board board = new Board(pawnsBoard, meetingPointX, meetingPointY);
         printBoard(board, meetingPointX, meetingPointY);
@@ -40,14 +40,13 @@ public class TestBoard {
         optimizer.setBoard(board);
 
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         printBoard(board, meetingPointX, meetingPointY);
-//        printBoard(board, meetingPointY, meetingPointX);
     }
 
     private void printBoard(BoardInterface board, int meetingPointX, int meetingPointY) {
