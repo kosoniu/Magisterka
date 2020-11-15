@@ -18,15 +18,17 @@ public class TestBoard {
 
 //        pawnsBoard[0][0] = new Pawn( pawnsBoard, 0,0);
 //        pawnsBoard[0][1] = new Pawn( pawnsBoard, 0,1);
-//        pawnsBoard[0][2] = new Pawn( pawnsBoard, 0,2);
-//        pawnsBoard[1][2] = new Pawn( pawnsBoard, 1,2);
-//        pawnsBoard[3][0] = new Pawn( pawnsBoard, 3,0);
+//        pawnsBoard[1][0] = new Pawn( pawnsBoard, 1,0);
+//        pawnsBoard[4][4] = new Pawn( pawnsBoard, 4,4);
+//        pawnsBoard[3][4] = new Pawn( pawnsBoard, 3,4);
+//        pawnsBoard[4][3] = new Pawn( pawnsBoard, 4,3);
+//        pawnsBoard[2][4] = new Pawn( pawnsBoard, 2,4);
 
-        int counter = 10;
+        int counter = 20;
 
         for(int i = 0; i < counter; i++) {
-            int x = random.nextInt(9);
-            int y = random.nextInt(9);
+            int x = random.nextInt(10);
+            int y = random.nextInt(10);
             pawnsBoard[x][y] = new Pawn( pawnsBoard, x, y);
         }
 
