@@ -1,14 +1,12 @@
 package main;
 
-import java.util.Random;
-
 public class Pawn implements PawnInterface {
 
     private int id;
     private int xPosition;
     private int yPosition;
     private PawnInterface board[][];
-    private Thread worker;
+    public Thread worker;
 
     public Pawn(PawnInterface board[][], int xPosition, int yPosition) {
         this.xPosition = xPosition;
