@@ -1,0 +1,3 @@
+/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug/CMakeFiles/edit_cache.dir
+/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug/CMakeFiles/Magnesy.dir

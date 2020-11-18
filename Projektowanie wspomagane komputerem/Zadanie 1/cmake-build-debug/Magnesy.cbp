@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Magnesy"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Magnesy">
+				<Option output="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug/Magnesy.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/x86_64-pc-cygwin"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/../../../../lib/../include/w32api"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 Magnesy"/>
+					<CompileFile command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Magnesy/fast">
+				<Option output="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug/Magnesy.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/x86_64-pc-cygwin"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-cygwin/10/../../../../lib/../include/w32api"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 Magnesy/fast"/>
+					<CompileFile command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make.exe -j8 -f &quot;/cygdrive/c/Projects/Studia/Projektowanie\ wspomagane\ komputerem/Magnesy/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/EnergyCalculator.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/EnergyCalculator.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/Helper.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/Helper.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/MonteCarlo.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/MonteCarlo.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/MyMPI.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/MyMPI.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/RandomNumberGenerator.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/RandomNumberGenerator.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/Simulation.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/Simulation.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/main.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/mpiusage.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/mpiusage.h">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/sg.cpp">
+			<Option target="Magnesy"/>
+		</Unit>
+		<Unit filename="/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
