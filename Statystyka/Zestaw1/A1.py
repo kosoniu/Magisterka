@@ -10,8 +10,8 @@ def gaussian_distribution(x, mu, sigma):
 
 def generate_random_numbers():
     while True:
-        x = (random.random() * 2) - 1
-        y = (random.random() * 2) - 1
+        x = random.uniform(-1, 1)
+        y = random.uniform(-1, 1)
         s = x * x + y * y
 
         if s < 1:
