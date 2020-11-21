@@ -14,7 +14,7 @@ gamma = 1.0
 
 x = np.random.uniform(size=10000)
 y = [generate_random_numbers(gamma, y0, i) for i in x]
-y2 = cauchy.rvs(size=10000)
+y2 = y0 + gamma * cauchy.rvs(size=10000)
 
 num_bins = np.linspace(start=-20, stop=20, num=100)
 
