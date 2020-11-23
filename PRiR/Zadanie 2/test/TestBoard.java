@@ -16,6 +16,60 @@ public class TestBoard {
 
     @Test
     public void testBoard() {
+        PawnInterface[][] pawnsBoard = new Pawn[12][12];
+
+        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[5][2] = new Pawn( pawnsBoard, 5, 2);
+        pawnsBoard[7][2] = new Pawn( pawnsBoard, 7, 2);
+        pawnsBoard[3][5] = new Pawn( pawnsBoard, 3, 5);
+        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[5][7] = new Pawn( pawnsBoard, 5, 7);
+        pawnsBoard[5][9] = new Pawn( pawnsBoard, 5, 9);
+        pawnsBoard[5][10] = new Pawn( pawnsBoard, 5, 10);
+
+        int meetingPointX = 5;
+        int meetingPointY = 5;
+
+        Board board = new Board(pawnsBoard, meetingPointX, meetingPointY);
+        printBoard(board, meetingPointX, meetingPointY);
+
+        OptimizerInterface optimizer = new Optimizer();
+        optimizer.setBoard(board);
+
+        printBoard(board, meetingPointX, meetingPointY);
+    }
+
+    @Test
+    public void testOneLineBoard() {
+        PawnInterface[][] pawnsBoard = new Pawn[12][12];
+
+        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[5][1] = new Pawn( pawnsBoard, 5, 1);
+        pawnsBoard[5][2] = new Pawn( pawnsBoard, 5, 2);
+        pawnsBoard[0][5] = new Pawn( pawnsBoard, 0, 5);
+        pawnsBoard[1][5] = new Pawn( pawnsBoard, 1, 5);
+        pawnsBoard[2][5] = new Pawn( pawnsBoard, 2, 5);
+        pawnsBoard[8][5] = new Pawn( pawnsBoard, 8, 5);
+        pawnsBoard[9][5] = new Pawn( pawnsBoard, 9, 5);
+        pawnsBoard[5][7] = new Pawn( pawnsBoard, 5, 7);
+        pawnsBoard[5][8] = new Pawn( pawnsBoard, 5, 8);
+        pawnsBoard[5][9] = new Pawn( pawnsBoard, 5, 9);
+        pawnsBoard[5][10] = new Pawn( pawnsBoard, 5, 10);
+
+        int meetingPointX = 5;
+        int meetingPointY = 5;
+
+        Board board = new Board(pawnsBoard, meetingPointX, meetingPointY);
+        printBoard(board, meetingPointX, meetingPointY);
+
+        OptimizerInterface optimizer = new Optimizer();
+        optimizer.setBoard(board);
+
+        printBoard(board, meetingPointX, meetingPointY);
+    }
+
+    @Test
+    public void testBigBoard() {
         PawnInterface[][] pawnsBoard = new Pawn[20][20];
         Random random = new Random();
 
@@ -41,44 +95,47 @@ public class TestBoard {
 
     @Test
     public void testSuspendResume() {
-        PawnInterface[][] pawnsBoard = new Pawn[10][10];
-        Random random = new Random();
-        OptimizerInterface optimizer = new Optimizer();
-        List<Pawn> pawns = new ArrayList<>();
+        PawnInterface[][] pawnsBoard = new Pawn[12][12];
 
-        int counter = 25;
-
-        for(int i = 0; i < counter; i++) {
-            int x = random.nextInt(10);
-            int y = random.nextInt(10);
-            Pawn pawn = new Pawn( pawnsBoard, x, y);
-            pawnsBoard[x][y] = pawn;
-            pawns.add(pawn);
-        }
+        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[5][2] = new Pawn( pawnsBoard, 5, 2);
+        pawnsBoard[7][2] = new Pawn( pawnsBoard, 7, 2);
+        pawnsBoard[3][5] = new Pawn( pawnsBoard, 3, 5);
+        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[5][7] = new Pawn( pawnsBoard, 5, 7);
+        pawnsBoard[5][9] = new Pawn( pawnsBoard, 5, 9);
+        pawnsBoard[5][10] = new Pawn( pawnsBoard, 5, 10);
 
         int meetingPointX = 5;
         int meetingPointY = 5;
 
         Board board = new Board(pawnsBoard, meetingPointX, meetingPointY);
         printBoard(board, meetingPointX, meetingPointY);
+
+        OptimizerInterface optimizer = new Optimizer();
         optimizer.setBoard(board);
+
+//        try {
+//            Thread.sleep(200);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         optimizer.suspend();
 
-//        pawns.forEach(pawn -> System.out.println(pawn.worker.getName() + " " + pawn.worker.getState()));
-
         try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {}
-
-//        pawns.forEach(pawn -> System.out.println(pawn.worker.getName() + " " + pawn.worker.getState()));
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         optimizer.resume();
 
-        printBoard(board, meetingPointX, meetingPointY);
 
+        printBoard(board, meetingPointX, meetingPointY);
     }
 
-    private void printBoard(BoardInterface board, int meetingPointX, int meetingPointY) {
+    private void printBoard(Board board, int meetingPointX, int meetingPointY) {
         for(int i = 0; i < board.getSize(); i++) {
             for( int j = 0; j < board.getSize(); j++) {
                 Optional<PawnInterface> pawn = board.get(j, i);
