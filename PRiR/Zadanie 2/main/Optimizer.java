@@ -45,42 +45,36 @@ public class Optimizer implements OptimizerInterface {
         board.optimizationStart();
         movers.forEach(PawnMover::start);
 
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
+//        boolean finished = false;
+//
+//        while(!finished) {
+//            for(Thread thread: movers) {
+//                if(thread.getState() == Thread.State.TERMINATED || thread.getState() == Thread.State.WAITING) {
+//                    finished = true;
+//                } else {
+//                    finished = false;
+//                    break;
+//                }
+//            }
 //        }
-
-        boolean finished = false;
-
-        while(!finished) {
-            for(Thread thread: movers) {
-                if(thread.getState() == Thread.State.TERMINATED || thread.getState() == Thread.State.WAITING) {
-                    finished = true;
-                } else {
-                    finished = false;
-                    break;
-                }
-            }
-        }
-
-        finished = false;
-
-        while(!finished) {
-            for(PawnMover pawnMover: movers) {
-                if(pawnMover.getState() == Thread.State.TERMINATED) {
-                    finished = true;
-                } else {
-                    finished = false;
-                    pawnMover.finish();
-                    break;
-                }
-            }
-        }
-
-        movers.forEach(pawnMover -> System.out.println(pawnMover.getState()));
-
-        board.optimizationDone();
+//
+//        finished = false;
+//
+//        while(!finished) {
+//            for(PawnMover pawnMover: movers) {
+//                if(pawnMover.getState() == Thread.State.TERMINATED) {
+//                    finished = true;
+//                } else {
+//                    finished = false;
+//                    pawnMover.finish();
+//                    break;
+//                }
+//            }
+//        }
+//
+//        movers.forEach(pawnMover -> System.out.println(pawnMover.getState()));
+//
+//        board.optimizationDone();
     }
 
     @Override
@@ -145,8 +139,6 @@ public class Optimizer implements OptimizerInterface {
                                 movePawn("D", x, y);
                             }
                         }
-
-
                     } else if(this.currentPositionY > meetingPointY) {
                         if(checkIf2WayMovementIsPossible(x + 1, y, x, y - 1)) {
                             if(board.get(x + 1, y).isEmpty()) {
@@ -155,8 +147,6 @@ public class Optimizer implements OptimizerInterface {
                                 movePawn("U", x, y);
                             }
                         }
-
-
                     } else {
                         movePawn("R", x, y);
                     }
@@ -169,8 +159,6 @@ public class Optimizer implements OptimizerInterface {
                                 movePawn("D", x, y);
                             }
                         }
-
-
                     } else if(this.currentPositionY > meetingPointY) {
                         if(checkIf2WayMovementIsPossible(x - 1, y, x, y - 1)) {
                             if(board.get(x - 1, y).isEmpty()) {
@@ -179,8 +167,6 @@ public class Optimizer implements OptimizerInterface {
                                 movePawn("U", x, y);
                             }
                         }
-
-
                     } else {
                         movePawn("L", x, y);
                     }
@@ -250,7 +236,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x - 1][y].lock.lock();
                 if(checkIfMovementIsPossible(x - 1, y))
                     this.currentPositionX = pawn.moveLeft();
-                lockers[x - 1][y].cannotMove.signalAll();
+//                lockers[x - 1][y].cannotMove.signalAll();
 
             } finally {
                 lockers[x - 1][y].lock.unlock();
@@ -262,7 +248,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x + 1][y].lock.lock();
                 if(checkIfMovementIsPossible(x + 1, y))
                     this.currentPositionX = pawn.moveRight();
-                lockers[x + 1][y].cannotMove.signalAll();
+//                lockers[x + 1][y].cannotMove.signalAll();
 
             } finally {
                 lockers[x + 1][y].lock.unlock();
@@ -274,7 +260,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x][y - 1].lock.lock();
                 if(checkIfMovementIsPossible(x, y - 1))
                     this.currentPositionY = pawn.moveUp();
-                lockers[x][y - 1].cannotMove.signalAll();
+//                lockers[x][y - 1].cannotMove.signalAll();
 
             } finally {
                 lockers[x][y - 1].lock.unlock();
@@ -286,23 +272,23 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x][y + 1].lock.lock();
                 if(checkIfMovementIsPossible(x, y + 1))
                     this.currentPositionY = pawn.moveDown();
-                lockers[x][y + 1].cannotMove.signalAll();
+//                lockers[x][y + 1].cannotMove.signalAll();
             } finally {
                 lockers[x][y + 1].lock.unlock();
             }
         }
 
         private void wakeUpThreads(int x, int y) {
-            if(!lockers[x][y].waitingObjects.isEmpty()) {
-                PawnMover pawnMover = lockers[x][y].waitingObjects.peek();
-                synchronized (pawnMover) {
-                    pawnMover.notifyAll();
-                }
-            }
-
             try {
                 lockers[x][y].lock.lock();
                 lockers[x][y].cannotMove.signalAll();
+                if(!lockers[x][y].waitingObjects.isEmpty()) {
+                    PawnMover pawnMover = lockers[x][y].waitingObjects.poll();
+                    synchronized (pawnMover) {
+                        System.out.println(getName() + " zwalniam: " + pawnMover.currentPositionX + currentPositionY);
+                        pawnMover.notify();
+                    }
+                }
             } finally {
                 lockers[x][y].lock.unlock();
             }
@@ -311,12 +297,13 @@ public class Optimizer implements OptimizerInterface {
         private boolean checkIfMovementIsPossible(int x, int y) {
             try {
                 while(board.get(x, y).isPresent()) {
-                    if(lockers[x][y].waitingObjects.contains(this)) {
-                        finished = true;
-                        return false;
-                    }
+//                    if(lockers[x][y].waitingObjects.contains(lockers[this.currentPositionX][this.currentPositionY])) {
+//                        finished = true;
+//                        return false;
+//                    }
 
-                    lockers[x][y].waitingObjects.add(this);
+//                    lockers[x][y].waitingObjects.add(this);
+                    System.out.println(getName() + " czekam na miejsce: " + x + y);
                     lockers[x][y].cannotMove.await();
                 }
             } catch (InterruptedException e) {}
@@ -324,21 +311,27 @@ public class Optimizer implements OptimizerInterface {
             return true;
         }
 
-        private synchronized boolean checkIf2WayMovementIsPossible(int x1, int y1, int x2, int y2) {
+        private boolean checkIf2WayMovementIsPossible(int x1, int y1, int x2, int y2) {
             try {
+//                lockers[this.currentPositionX][this.currentPositionY].lock.lock();
                 while(board.get(x1, y1).isPresent() && board.get(x2, y2).isPresent()) {
-                    if(lockers[x1][y1].waitingObjects.contains(this) && lockers[x2][y2].waitingObjects.contains(this)) {
-                        finished = true;
-                        return false;
-                    }
+//                    if(lockers[x1][y1].waitingObjects.contains(this) && lockers[x2][y2].waitingObjects.contains(this)) {
+//                        finished = true;
+//                        return false;
+//                    }
 
                     lockers[x1][y1].waitingObjects.add(this);
                     lockers[x2][y2].waitingObjects.add(this);
-                    wait();
+                    System.out.println(getName() + " czekam na miejsce: " + x1 + y1 + " lub " + x2 + y2);
+                    synchronized (this) {
+                        wait();
+                    }
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e) {}
 
-            }
+//            } finally {
+//                lockers[this.currentPositionX][this.currentPositionY].lock.unlock();
+//            }
 
             return true;
         }
