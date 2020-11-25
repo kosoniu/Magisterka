@@ -23,13 +23,12 @@ public class Pawn implements PawnInterface {
 
     @Override
     public int moveLeft() {
-        synchronized (board[xPosition][yPosition]) {
-//            try {
-//                Thread.sleep(1000);
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+        synchronized (worker) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             board[xPosition - 1][yPosition] = this;
             board[xPosition][yPosition] = null;
             xPosition -= 1;
@@ -40,13 +39,12 @@ public class Pawn implements PawnInterface {
 
     @Override
     public int moveRight() {
-        synchronized (board[xPosition][yPosition]) {
-//            try {
-//                Thread.sleep(1000);
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+        synchronized (worker) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             board[xPosition + 1][yPosition] = this;
             board[xPosition][yPosition] = null;
             xPosition += 1;
@@ -57,12 +55,12 @@ public class Pawn implements PawnInterface {
 
     @Override
     public int moveUp() {
-        synchronized (board[xPosition][yPosition]) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+        synchronized (worker) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             board[xPosition][yPosition - 1] = this;
             board[xPosition][yPosition] = null;
             yPosition -= 1;
@@ -73,13 +71,12 @@ public class Pawn implements PawnInterface {
 
     @Override
     public int moveDown() {
-        synchronized (board[xPosition][yPosition]) {
-//            try {
-//                Thread.sleep(1000);
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+        synchronized (worker) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             board[xPosition][yPosition + 1] = this;
             board[xPosition][yPosition] = null;
             yPosition += 1;
@@ -92,15 +89,4 @@ public class Pawn implements PawnInterface {
     public void registerThread(Thread thread) {
         this.worker = thread;
     }
-
-    private void waitFor(int miliSeconds) {
-        synchronized (worker) {
-            try {
-                lock.wait(miliSeconds);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 }

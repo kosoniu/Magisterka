@@ -40,7 +40,7 @@ public class TestBoard {
     }
 
     @Test
-    public void testOneLineBoard() {
+    public void testOneLineBoard() throws InterruptedException {
         PawnInterface[][] pawnsBoard = new Pawn[12][12];
 
         pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
@@ -142,13 +142,13 @@ public class TestBoard {
 
                 if(pawn.isPresent()) {
                     if(meetingPointX == j && meetingPointY == i)
-                        System.out.print(ANSI_MAGNETA + pawn.get().getID() + ANSI_RESET + " | ");
+                        System.out.print(ANSI_MAGNETA + String.format("%04X", pawn.get().getID()) + ANSI_RESET + " |");
                     else
-                        System.out.print(ANSI_RED + pawn.get().getID() + ANSI_RESET + " | ");
+                        System.out.print(ANSI_RED + String.format("%04X", pawn.get().getID()) + ANSI_RESET + " |");
                 } else if(meetingPointX == j && meetingPointY == i) {
-                    System.out.print(ANSI_RED + " x" + ANSI_RESET + " | ");
+                    System.out.print(ANSI_RED +  "  x " + ANSI_RESET + " |");
                 } else {
-                    System.out.print( " o | ");
+                    System.out.print( "  o  |");
                 }
             }
             System.out.println();
