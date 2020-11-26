@@ -236,7 +236,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x - 1][y].lock.lock();
                 if(checkIfMovementIsPossible(x - 1, y))
                     this.currentPositionX = pawn.moveLeft();
-//                lockers[x - 1][y].cannotMove.signalAll();
+                lockers[x - 1][y].cannotMove.signalAll();
 
             } finally {
                 lockers[x - 1][y].lock.unlock();
@@ -248,7 +248,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x + 1][y].lock.lock();
                 if(checkIfMovementIsPossible(x + 1, y))
                     this.currentPositionX = pawn.moveRight();
-//                lockers[x + 1][y].cannotMove.signalAll();
+                lockers[x + 1][y].cannotMove.signalAll();
 
             } finally {
                 lockers[x + 1][y].lock.unlock();
@@ -260,7 +260,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x][y - 1].lock.lock();
                 if(checkIfMovementIsPossible(x, y - 1))
                     this.currentPositionY = pawn.moveUp();
-//                lockers[x][y - 1].cannotMove.signalAll();
+                lockers[x][y - 1].cannotMove.signalAll();
 
             } finally {
                 lockers[x][y - 1].lock.unlock();
@@ -272,7 +272,7 @@ public class Optimizer implements OptimizerInterface {
                 lockers[x][y + 1].lock.lock();
                 if(checkIfMovementIsPossible(x, y + 1))
                     this.currentPositionY = pawn.moveDown();
-//                lockers[x][y + 1].cannotMove.signalAll();
+                lockers[x][y + 1].cannotMove.signalAll();
             } finally {
                 lockers[x][y + 1].lock.unlock();
             }
@@ -282,15 +282,17 @@ public class Optimizer implements OptimizerInterface {
             try {
                 lockers[x][y].lock.lock();
                 lockers[x][y].cannotMove.signalAll();
-                if(!lockers[x][y].waitingObjects.isEmpty()) {
-                    PawnMover pawnMover = lockers[x][y].waitingObjects.poll();
-                    synchronized (pawnMover) {
-                        System.out.println(getName() + " zwalniam: " + pawnMover.currentPositionX + currentPositionY);
-                        pawnMover.notify();
-                    }
-                }
+
             } finally {
                 lockers[x][y].lock.unlock();
+            }
+
+            if(!lockers[x][y].waitingObjects.isEmpty()) {
+                PawnMover pawnMover = lockers[x][y].waitingObjects.poll();
+                synchronized (pawnMover) {
+                    System.out.println(getName() + " zwalniam: " + pawnMover.currentPositionX + currentPositionY);
+                    pawnMover.notify();
+                }
             }
         }
 
@@ -328,6 +330,8 @@ public class Optimizer implements OptimizerInterface {
                     }
                 }
             } catch (InterruptedException e) {}
+
+
 
 //            } finally {
 //                lockers[this.currentPositionX][this.currentPositionY].lock.unlock();
