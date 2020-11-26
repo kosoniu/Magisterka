@@ -25,14 +25,14 @@ public class Pawn implements PawnInterface {
 
     @Override
     public int moveLeft() {
-            try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            board[xPosition - 1][yPosition] = this;
-            board[xPosition][yPosition] = null;
-            xPosition -= 1;
+        try {
+            Thread.sleep(ThreadLocalRandom.current().nextInt(100,300));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        board[xPosition - 1][yPosition] = this;
+        board[xPosition][yPosition] = null;
+        xPosition -= 1;
 
         return xPosition;
     }
@@ -40,7 +40,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveRight() {
         try {
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
+            Thread.sleep(ThreadLocalRandom.current().nextInt(100,300));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveUp() {
         try {
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
+            Thread.sleep(ThreadLocalRandom.current().nextInt(100,300));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -69,7 +69,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveDown() {
         try {
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
+            Thread.sleep(ThreadLocalRandom.current().nextInt(100,300));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

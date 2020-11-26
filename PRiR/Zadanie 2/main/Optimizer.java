@@ -31,11 +31,11 @@ public class Optimizer implements OptimizerInterface {
                 if(pawn.isPresent()) {
                     PawnMover pawnMover = new PawnMover(pawn.get(), i , j);
                     pawnMover.setName("Watek: " + pawn.get().getID());
-//                    try {
-//                        pawnMover.join();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        pawnMover.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     movers.add(pawnMover);
                     pawn.get().registerThread(pawnMover);
                 }
@@ -43,11 +43,6 @@ public class Optimizer implements OptimizerInterface {
         }
 
         OptimizationWatcher watcher = new OptimizationWatcher();
-//        try {
-//            watcher.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         movers.forEach(PawnMover::start);
         watcher.start();
     }
@@ -259,18 +254,11 @@ public class Optimizer implements OptimizerInterface {
         }
 
         private void wakeUpThreads(int x, int y) {
-            try {
-                lockers[x][y].lock.lock();
-                lockers[x][y].cannotMove.signalAll();
-            } finally {
-                lockers[x][y].lock.unlock();
-            }
-
             if(!lockers[x][y].waitingObjects.isEmpty()) {
-                Locker locker = lockers[x][y].waitingObjects.poll();
+                Locker locker = lockers[x][y].waitingObjects.remove();
                 locker.lock.lock();
                 try {
-                    locker.cannotMove.signalAll();
+                    locker.cannotMove.signal();
                 } finally {
                     locker.lock.unlock();
                 }
