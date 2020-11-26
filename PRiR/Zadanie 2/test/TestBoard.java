@@ -21,6 +21,7 @@ public class TestBoard {
         pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
         pawnsBoard[5][2] = new Pawn( pawnsBoard, 5, 2);
         pawnsBoard[7][2] = new Pawn( pawnsBoard, 7, 2);
+        pawnsBoard[10][1] = new Pawn( pawnsBoard, 10, 1);
         pawnsBoard[3][5] = new Pawn( pawnsBoard, 3, 5);
         pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
         pawnsBoard[5][7] = new Pawn( pawnsBoard, 5, 7);
