@@ -87,7 +87,7 @@ public class TestBoard {
         PawnInterface[][] pawnsBoard = new Pawn[20][20];
         Random random = new Random();
 
-        int counter = 30;
+        int counter = 200;
 
         for(int i = 0; i < counter; i++) {
             int x = random.nextInt(20);
@@ -97,6 +97,38 @@ public class TestBoard {
 
         int meetingPointX = 10;
         int meetingPointY = 10;
+
+        Board board = new Board(pawnsBoard, meetingPointX, meetingPointY);
+        printBoard(board, meetingPointX, meetingPointY);
+
+        OptimizerInterface optimizer = new Optimizer();
+        optimizer.setBoard(board);
+
+        boolean ended = board.optimizationEnded;
+
+        while(!ended) {
+            Thread.sleep(1000);
+            ended = board.optimizationEnded;
+        }
+
+        printBoard(board, meetingPointX, meetingPointY);
+    }
+
+    @Test
+    public void testCorner() throws InterruptedException {
+        PawnInterface[][] pawnsBoard = new Pawn[20][20];
+        Random random = new Random();
+
+        int counter = 200;
+
+        for(int i = 0; i < counter; i++) {
+            int x = random.nextInt(20);
+            int y = random.nextInt(20);
+            pawnsBoard[x][y] = new Pawn( pawnsBoard, x, y);
+        }
+
+        int meetingPointX = 0;
+        int meetingPointY = 0;
 
         Board board = new Board(pawnsBoard, meetingPointX, meetingPointY);
         printBoard(board, meetingPointX, meetingPointY);

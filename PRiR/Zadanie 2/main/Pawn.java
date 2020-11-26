@@ -1,5 +1,8 @@
 package main;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Pawn implements PawnInterface {
 
     private int id;
@@ -23,7 +26,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveLeft() {
             try {
-                Thread.sleep(500);
+                Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -37,7 +40,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveRight() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -52,7 +55,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveUp() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -66,7 +69,7 @@ public class Pawn implements PawnInterface {
     @Override
     public int moveDown() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(ThreadLocalRandom.current().nextInt(500,1000));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
