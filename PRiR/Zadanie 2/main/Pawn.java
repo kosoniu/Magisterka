@@ -7,7 +7,6 @@ public class Pawn implements PawnInterface {
     private int yPosition;
     private PawnInterface board[][];
     public Thread worker;
-    private final Object lock = new Object();
 
     public Pawn(PawnInterface board[][], int xPosition, int yPosition) {
         this.xPosition = xPosition;
@@ -23,64 +22,57 @@ public class Pawn implements PawnInterface {
 
     @Override
     public int moveLeft() {
-        synchronized (worker) {
             try {
-                Thread.sleep(200);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             board[xPosition - 1][yPosition] = this;
             board[xPosition][yPosition] = null;
             xPosition -= 1;
-        }
 
         return xPosition;
     }
 
     @Override
     public int moveRight() {
-        synchronized (worker) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            board[xPosition + 1][yPosition] = this;
-            board[xPosition][yPosition] = null;
-            xPosition += 1;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+        board[xPosition + 1][yPosition] = this;
+        board[xPosition][yPosition] = null;
+        xPosition += 1;
 
         return xPosition;
     }
 
     @Override
     public int moveUp() {
-        synchronized (worker) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            board[xPosition][yPosition - 1] = this;
-            board[xPosition][yPosition] = null;
-            yPosition -= 1;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        board[xPosition][yPosition - 1] = this;
+        board[xPosition][yPosition] = null;
+        yPosition -= 1;
 
         return yPosition;
     }
 
     @Override
     public int moveDown() {
-        synchronized (worker) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            board[xPosition][yPosition + 1] = this;
-            board[xPosition][yPosition] = null;
-            yPosition += 1;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        board[xPosition][yPosition + 1] = this;
+        board[xPosition][yPosition] = null;
+        yPosition += 1;
 
         return yPosition;
     }
