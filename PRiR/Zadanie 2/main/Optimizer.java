@@ -201,8 +201,6 @@ public class Optimizer implements OptimizerInterface {
         }
 
         private void movePawn(String direction, int x, int y) {
-            checkIfSuspended();
-
             switch (direction) {
                 case "L":
                     moveLeft(x, y);
@@ -217,7 +215,6 @@ public class Optimizer implements OptimizerInterface {
                     moveDown(x, y);
                     break;
             }
-
         }
 
         private void moveLeft(int x, int y) {
@@ -322,14 +319,6 @@ public class Optimizer implements OptimizerInterface {
             finally {
                 lockers[x][y].lock.unlock();
             }
-        }
-
-        private void checkIfSuspended() {
-            try {
-                while(suspended) {
-                    lockers[this.currentPositionX][this.currentPositionY].cannotMove.await();
-                }
-            } catch (InterruptedException e) {}
         }
     }
 }

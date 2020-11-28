@@ -151,12 +151,26 @@ public class TestBoard {
     public void testSuspendResume() throws InterruptedException {
         PawnInterface[][] pawnsBoard = new Pawn[12][12];
 
+//        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+//        pawnsBoard[5][2] = new Pawn( pawnsBoard, 5, 2);
+//        pawnsBoard[7][2] = new Pawn( pawnsBoard, 7, 2);
+//        pawnsBoard[10][1] = new Pawn( pawnsBoard, 10, 1);
+//        pawnsBoard[3][5] = new Pawn( pawnsBoard, 3, 5);
+//        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+//        pawnsBoard[5][7] = new Pawn( pawnsBoard, 5, 7);
+//        pawnsBoard[5][9] = new Pawn( pawnsBoard, 5, 9);
+//        pawnsBoard[5][10] = new Pawn( pawnsBoard, 5, 10);
+
         pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[5][1] = new Pawn( pawnsBoard, 5, 1);
         pawnsBoard[5][2] = new Pawn( pawnsBoard, 5, 2);
-        pawnsBoard[7][2] = new Pawn( pawnsBoard, 7, 2);
-        pawnsBoard[3][5] = new Pawn( pawnsBoard, 3, 5);
-        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+        pawnsBoard[0][5] = new Pawn( pawnsBoard, 0, 5);
+        pawnsBoard[1][5] = new Pawn( pawnsBoard, 1, 5);
+        pawnsBoard[2][5] = new Pawn( pawnsBoard, 2, 5);
+        pawnsBoard[8][5] = new Pawn( pawnsBoard, 8, 5);
+        pawnsBoard[9][5] = new Pawn( pawnsBoard, 9, 5);
         pawnsBoard[5][7] = new Pawn( pawnsBoard, 5, 7);
+        pawnsBoard[5][8] = new Pawn( pawnsBoard, 5, 8);
         pawnsBoard[5][9] = new Pawn( pawnsBoard, 5, 9);
         pawnsBoard[5][10] = new Pawn( pawnsBoard, 5, 10);
 
@@ -169,27 +183,25 @@ public class TestBoard {
         OptimizerInterface optimizer = new Optimizer();
         optimizer.setBoard(board);
 
+        Thread.sleep(200);
+
         optimizer.suspend();
 
-        try {
-            System.out.println("na 5s wstrzymuje prace pionkow");
-            Thread.sleep(1000);
-            printBoard(board, meetingPointX, meetingPointY);
-            Thread.sleep(1000);
-            printBoard(board, meetingPointX, meetingPointY);
-            Thread.sleep(3000);
-            System.out.println("wznamwiam prace");
-            optimizer.resume();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        System.out.println("na 5s wstrzymuje prace pionkow");
+        Thread.sleep(1000);
+        printBoard(board, meetingPointX, meetingPointY);
+        Thread.sleep(1000);
+        printBoard(board, meetingPointX, meetingPointY);
+        Thread.sleep(3000);
+        System.out.println("wznamwiam prace");
+        optimizer.resume();
+
 
         boolean ended = board.optimizationEnded;
 
         while(!ended) {
             Thread.sleep(1000);
             ended = board.optimizationEnded;
-            System.out.println(ended);
         }
 
         printBoard(board, meetingPointX, meetingPointY);
