@@ -177,7 +177,7 @@ public class Optimizer implements OptimizerInterface {
 
             try {
                 if(!this.finished) {
-                    lockers[x][y].cannotMove.signal();
+                    lockers[x][y].cannotMove.signalAll();
                 }
             } finally {
                 lockers[x][y].lock.unlock();
@@ -218,7 +218,6 @@ public class Optimizer implements OptimizerInterface {
                     break;
             }
 
-            wakeUpThreads(x, y);
         }
 
         private void moveLeft(int x, int y) {
@@ -254,6 +253,7 @@ public class Optimizer implements OptimizerInterface {
         }
 
         private void wakeUpThreads(int x, int y) {
+//            System.out.println(getName() + " budze watki czekajace na " + x + y);
             if(!lockers[x][y].waitingObjects.isEmpty()) {
                 Locker locker = lockers[x][y].waitingObjects.remove();
                 locker.lock.lock();
@@ -277,10 +277,13 @@ public class Optimizer implements OptimizerInterface {
                         return;
                     }
                     lockers[x][y].waitingObjects.add(lockers[currentX][currentY]);
+//                    System.out.println(getName() + " czekam na: " + x + y);
                     lockers[currentX][currentY].cannotMove.await();
+//                    System.out.println(getName() + " budze sie");
                 }
                 if(board.get(x, y).isEmpty() && lockers[x][y].lock.tryLock()) {
                     movePawn(direction, currentX, currentY);
+                    wakeUpThreads(currentX, currentY);
                 }
             } catch (InterruptedException e) {}
             finally {
@@ -306,8 +309,14 @@ public class Optimizer implements OptimizerInterface {
                 }
                 if(board.get(x1, y1).isEmpty() && lockers[x1][y1].lock.tryLock()) {
                     movePawn(firstDirection, x, y);
+                    wakeUpThreads(x, y);
+
+
                 } else if(board.get(x2, y2).isEmpty() && lockers[x2][y2].lock.tryLock()) {
                     movePawn(secondDirection, x, y);
+                    wakeUpThreads(x, y);
+
+
                 }
             } catch (InterruptedException e) {}
             finally {

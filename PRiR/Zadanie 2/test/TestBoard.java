@@ -88,7 +88,7 @@ public class TestBoard {
         PawnInterface[][] pawnsBoard = new Pawn[20][20];
         Random random = new Random();
 
-        int counter = 200;
+        int counter = 50;
 
         for(int i = 0; i < counter; i++) {
             int x = random.nextInt(20);
@@ -196,26 +196,26 @@ public class TestBoard {
     }
 
     private void printBoard(Board board, int meetingPointX, int meetingPointY) {
-        synchronized (board) {
-            for(int i = 0; i < board.getSize(); i++) {
-                for( int j = 0; j < board.getSize(); j++) {
-                    Optional<PawnInterface> pawn = board.get(j, i);
+        int counter = 0;
 
-                    if(pawn.isPresent()) {
-                        if(meetingPointX == j && meetingPointY == i)
-                            System.out.print(ANSI_MAGNETA + String.format("%04d", pawn.get().getID()) + ANSI_RESET + " |");
-                        else
-                            System.out.print(ANSI_RED + String.format("%04d", pawn.get().getID()) + ANSI_RESET + " |");
-                    } else if(meetingPointX == j && meetingPointY == i) {
-                        System.out.print(ANSI_RED +  "  x " + ANSI_RESET + " |");
-                    } else {
-                        System.out.print( "  o  |");
-                    }
+        for(int i = 0; i < board.getSize(); i++) {
+            for( int j = 0; j < board.getSize(); j++) {
+                Optional<PawnInterface> pawn = board.get(j, i);
+
+                if(pawn.isPresent()) {
+                    counter++;
+                    if(meetingPointX == j && meetingPointY == i)
+                        System.out.print(ANSI_MAGNETA + String.format("%04d", pawn.get().getID()) + ANSI_RESET + " |");
+                    else
+                        System.out.print(ANSI_RED + String.format("%04d", pawn.get().getID()) + ANSI_RESET + " |");
+                } else if(meetingPointX == j && meetingPointY == i) {
+                    System.out.print(ANSI_RED +  "  x " + ANSI_RESET + " |");
+                } else {
+                    System.out.print( "  o  |");
                 }
-                System.out.println();
             }
             System.out.println();
-
         }
+        System.out.println("ilosc pionkow: " + counter);
     }
 }
