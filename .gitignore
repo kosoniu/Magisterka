@@ -21,6 +21,7 @@ gen/
 *.exe
 *.o
 *.so
+.cmake-build-debug/
 
 # Packages #
 ############
