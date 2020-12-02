@@ -88,7 +88,7 @@ public class TestBoard {
         PawnInterface[][] pawnsBoard = new Pawn[20][20];
         Random random = new Random();
 
-        int counter = 50;
+        int counter = 150;
 
         for(int i = 0; i < counter; i++) {
             int x = random.nextInt(20);

@@ -1,4 +1,4 @@
-C:\Users\ngdk78\AppData\Local\JetBrains\CLion2020.2\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/cygdrive/c/Projects/Studia/Projektowanie wspomagane komputerem/Magnesy"
+C:\Users\ngdk78\AppData\Local\JetBrains\CLion2020.2\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/cygdrive/c/Projects/Magisterka/PRiR/Zadanie 1"
 -- Configuring done
 CMake Error at CMakeLists.txt:6 (add_executable):
   Cannot find source file:
