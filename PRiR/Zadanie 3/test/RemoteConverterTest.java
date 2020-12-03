@@ -9,17 +9,10 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class RemoteConverterTest {
 
@@ -99,6 +92,52 @@ public class RemoteConverterTest {
         assertEquals(user3.getResult(), converter.convert(user3Values));
         assertEquals(user4.getResult(), converter.convert(user4Values));
         assertEquals(user5.getResult(), converter.convert(user5Values));
+    }
+
+    @Test
+    public void testBigArrays() throws RemoteException, NotBoundException, InterruptedException {
+        Registry registry = LocateRegistry.getRegistry();
+        RemoteConverterInterface remoteConverter = (RemoteConverterInterface) registry.lookup("REMOTE_CONVERTER");
+        Thread.sleep(2000);
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        ConverterInterface converter = new Converter();
+
+        Random random = ThreadLocalRandom.current();
+
+        Integer userNumber = 20;
+        List<List<Integer>> values = new ArrayList<>();
+        List<User> users = new ArrayList<>();
+
+        for(int i = 1; i <= userNumber; i++) {
+            List<Integer> userValues = new ArrayList<>();
+            for( int j = 0; j < 20; j++) {
+                userValues.add(random.nextInt(20));
+            }
+            values.add(userValues);
+
+            User user = new User(remoteConverter, userValues);
+            user.setName("User " + i);
+            users.add(user);
+        }
+        users.forEach(executorService::execute);
+
+        executorService.shutdown();
+
+        if(executorService.awaitTermination(20, TimeUnit.SECONDS)) {
+            for(int i = 0; i < userNumber; i++) {
+                if(!users.get(i).isResultReady()) {
+                    assertNull(users.get(i).getResult());
+                }
+
+                while(!users.get(i).isResultReady()) {
+                    Thread.sleep(100);
+                }
+
+                assertEquals("Dla Usera " + i + " wynik okazal sie bledny", converter.convert(values.get(i)), users.get(i).getResult());
+            }
+        }
     }
 
 }

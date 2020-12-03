@@ -7,7 +7,14 @@ public class Converter implements ConverterInterface, Serializable {
     @Override
     public List<Integer> convert(List<Integer> input) throws RemoteException {
         List<Integer> result = new ArrayList<>();
-        input.forEach(value -> result.add(value*value));
+        input.forEach(value -> {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            result.add(value*value);
+        });
         return result;
     }
 }

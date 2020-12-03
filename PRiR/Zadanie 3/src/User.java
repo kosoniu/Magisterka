@@ -1,8 +1,9 @@
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class User extends Thread implements Serializable {
 
@@ -10,6 +11,9 @@ public class User extends Thread implements Serializable {
     private int[] values;
     private int id;
     private List<Integer> result;
+//    private ReentrantLock lock = new ReentrantLock();
+//    private Condition resultReady = lock.newCondition();
+//    private Condition resultNotReady = lock.newCondition();
 
     public User(RemoteConverterInterface remoteConverterInterface) {
         remoteConverter = remoteConverterInterface;
@@ -21,7 +25,15 @@ public class User extends Thread implements Serializable {
         for(int i = 0; i < values.size(); i++) this.values[i] = values.get(i);
     }
 
-    public List<Integer> getResult() {
+    public boolean isResultReady() throws RemoteException {
+        return remoteConverter.resultReady(id);
+    }
+
+    public List<Integer> getResult() throws RemoteException {
+        if(result != null)
+            return result;
+
+        result = remoteConverter.getResult(id);
         return result;
     }
 
@@ -35,21 +47,16 @@ public class User extends Thread implements Serializable {
         try {
             id = remoteConverter.registerUser();
 
-            for(int i = 0; i < values.length; i++) {
-                remoteConverter.addDataToList(id, values[i]);
+            for (int value : values) {
+                remoteConverter.addDataToList(id, value);
             }
 
-            System.out.println(getName() + " koncze dodawanie");
+//            System.out.println(getName() + " koncze dodawanie");
             remoteConverter.endOfData(id);
-
-            while(!remoteConverter.resultReady(id)) {
-                Thread.sleep(100);
-            }
-
-            result = remoteConverter.getResult(id);
-            System.out.println(getName() + " converted list: " + result);
-        } catch (RemoteException | InterruptedException e) {
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
+
+
 }

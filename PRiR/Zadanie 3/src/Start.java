@@ -9,21 +9,23 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Start implements RemoteConverterInterface, Serializable {
 
     private ConverterInterface converter;
-    private int counter;
+    private AtomicInteger counter;
     private final Map<Integer, List<Integer>> usersInput;
-    private final Map<Integer, Boolean> usersReadiness;
+    private final Map<Integer, List<Integer>> usersResult;
     private final BlockingQueue<Pair<Integer, List<Integer>>> valuesQueue;
 
-
     public Start() {
-        usersInput = new ConcurrentHashMap<>();
-        usersReadiness = new ConcurrentHashMap<>();
+        usersInput = new ConcurrentSkipListMap<>();
+        usersResult = new ConcurrentSkipListMap<>();
         valuesQueue = new LinkedBlockingQueue();
+        counter = new AtomicInteger();
         Consumer consumer = new Consumer();
         consumer.start();
         try {
@@ -37,9 +39,9 @@ public class Start implements RemoteConverterInterface, Serializable {
 
     @Override
     public int registerUser() throws RemoteException {
-        counter++;
+        int counter = this.counter.incrementAndGet();
         usersInput.putIfAbsent(counter, new ArrayList<>());
-        usersReadiness.putIfAbsent(counter, false);
+        usersResult.putIfAbsent(counter, new ArrayList<>());
         return counter;
     }
 
@@ -51,7 +53,6 @@ public class Start implements RemoteConverterInterface, Serializable {
     @Override
     public void setConverterURL(String url) throws RemoteException {
         try {
-//            Registry registry = LocateRegistry.getRegistry();
             converter = (ConverterInterface) Naming.lookup(url);
         } catch (NotBoundException | MalformedURLException e) {
             e.printStackTrace();
@@ -60,57 +61,41 @@ public class Start implements RemoteConverterInterface, Serializable {
 
     @Override
     public void endOfData(int userID) throws RemoteException {
-//        synchronized (usersInput) {
-            System.out.println("User " + userID + " input: " + usersInput.get(userID));
-//        }
-        valuesQueue.add(new Pair<>(userID, usersInput.get(userID)));
+        try {
+            valuesQueue.put(new Pair<>(userID, usersInput.get(userID)));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public boolean resultReady(int userID) throws RemoteException {
-        return usersReadiness.get(userID);
+        int size = usersResult.get(userID).size();
+        return size > 0;
     }
 
     @Override
     public List<Integer> getResult(int userID) throws RemoteException {
-        return usersInput.get(userID);
+        List<Integer> result = usersResult.get(userID);
+        return result.size() > 0 ? result : null;
     }
 
     private class Consumer extends Thread {
         @Override
         public void run() {
-
-            while(!isJobFinished()) {
+            while(true) {
                 try {
                     Pair<Integer, List<Integer>> valuesInput = valuesQueue.take();
                     List<Integer> valuesList = valuesInput.getValue();
                     Integer userId = valuesInput.getKey();
+                    System.out.println("User " + userId + " list: " + valuesList);
                     List<Integer> convertedValuesList = converter.convert(valuesList);
-//                    System.out.println("User " + userId + " converted list: " + convertedValuesList);
-                    usersInput.replace(userId, convertedValuesList);
-                    usersReadiness.replace(userId, true);
+                    System.out.println("User " + userId + " converted list: " + convertedValuesList);
+                    usersResult.replace(userId, convertedValuesList);
                 } catch (RemoteException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-
-        }
-
-        private boolean isJobFinished() {
-            boolean finished = false;
-
-            Set<Integer> usersId = usersReadiness.keySet();
-
-            for(Integer userId: usersId) {
-                if(usersReadiness.get(userId)) {
-                    finished = true;
-                } else {
-                    finished = false;
-                    break;
-                }
-            }
-
-            return finished;
         }
     }
 
