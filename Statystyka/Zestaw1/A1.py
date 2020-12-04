@@ -18,6 +18,24 @@ def generate_random_numbers():
             return math.sqrt(-2 * math.log(s)) * (y / math.sqrt(s))
 
 
+def avg(values):
+    result = 0
+
+    for i in values:
+        result += i
+
+    return result / len(values)
+
+
+def variance(avg, values):
+    result = 0
+
+    for i in values:
+        result += (i - avg) ** 2
+
+    return result / len(values)
+
+
 np.random.seed(19680801)
 
 mu = 0
@@ -27,6 +45,14 @@ y = mu + sigma * np.random.randn(50000)
 x = []
 for i in range(50000):
     x.append(mu + sigma * generate_random_numbers())
+
+avgList = []
+for i in x:
+    avgList.append(gaussian_distribution(i, mu, sigma))
+
+avg = avg(avgList)
+print("Srednia wynosi: " + str(avg))
+print("Wariancja wynosi: " + str(variance(avg, avgList)))
 
 num_bins = 100
 
