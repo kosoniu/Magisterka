@@ -33,16 +33,15 @@ y0 = 0.0
 gamma = 1.0
 
 x = np.random.uniform(size=10000)
+y = []
+
 y = [generate_random_numbers(gamma, y0, i) for i in x]
 y2 = y0 + gamma * cauchy.rvs(size=10000)
 
-avgList = []
-for i in x:
-    avgList.append(quantileFunction(i, gamma, y0))
+avg = avg(y)
 
-avg = avg(avgList)
 print("Srednia wynosi: " + str(avg))
-print("Wariancja wynosi: " + str(variance(avg, avgList)))
+print("Wariancja wynosi: " + str(variance(avg, y)))
 
 num_bins = np.linspace(start=-20, stop=20, num=100)
 

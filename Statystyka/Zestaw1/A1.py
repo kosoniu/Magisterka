@@ -50,9 +50,9 @@ avgList = []
 for i in x:
     avgList.append(gaussian_distribution(i, mu, sigma))
 
-avg = avg(avgList)
+avg = avg(x)
 print("Srednia wynosi: " + str(avg))
-print("Wariancja wynosi: " + str(variance(avg, avgList)))
+print("Wariancja wynosi: " + str(variance(avg, x)))
 
 num_bins = 100
 
