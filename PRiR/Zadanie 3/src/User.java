@@ -48,10 +48,15 @@ public class User extends Thread implements Serializable {
             id = remoteConverter.registerUser();
 
             for (int value : values) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 remoteConverter.addDataToList(id, value);
             }
 
-//            System.out.println(getName() + " koncze dodawanie");
+            System.out.println(getName() + " koncze dodawanie");
             remoteConverter.endOfData(id);
         } catch (RemoteException e) {
             e.printStackTrace();

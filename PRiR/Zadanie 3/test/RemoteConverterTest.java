@@ -106,13 +106,13 @@ public class RemoteConverterTest {
 
         Random random = ThreadLocalRandom.current();
 
-        Integer userNumber = 20;
+        Integer userNumber = 30;
         List<List<Integer>> values = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
         for(int i = 1; i <= userNumber; i++) {
             List<Integer> userValues = new ArrayList<>();
-            for( int j = 0; j < 20; j++) {
+            for( int j = 0; j < random.nextInt(20) + 5; j++) {
                 userValues.add(random.nextInt(20));
             }
             values.add(userValues);

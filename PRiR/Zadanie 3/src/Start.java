@@ -9,7 +9,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,8 +21,8 @@ public class Start implements RemoteConverterInterface, Serializable {
     private final BlockingQueue<Pair<Integer, List<Integer>>> valuesQueue;
 
     public Start() {
-        usersInput = new ConcurrentSkipListMap<>();
-        usersResult = new ConcurrentSkipListMap<>();
+        usersInput = new ConcurrentHashMap<>();
+        usersResult = new ConcurrentHashMap<>();
         valuesQueue = new LinkedBlockingQueue();
         counter = new AtomicInteger();
         Consumer consumer = new Consumer();
