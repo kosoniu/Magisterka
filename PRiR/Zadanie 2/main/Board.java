@@ -48,12 +48,10 @@ public class Board implements BoardInterface {
     @Override
     public void optimizationDone() {
         this.optimizationEnded = true;
-        this.optimizationStarted = true;
     }
 
     @Override
     public void optimizationStart() {
-        this.optimizationEnded = false;
-        this.optimizationStarted = true;
+        this.optimizationStarted = false;
     }
 }

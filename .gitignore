@@ -21,6 +21,10 @@ gen/
 *.exe
 *.o
 *.so
+*.txt
+*.make
+*.bin
+cmake-build-debug/
 
 # Packages #
 ############
@@ -61,3 +65,4 @@ CVS
 *.mode2v3
 *.perspectivev3
 xcuserdata/
+
