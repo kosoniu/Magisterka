@@ -1,5 +1,3 @@
-package main;
-
 import java.util.Optional;
 
 public class Board implements BoardInterface {
@@ -22,7 +20,7 @@ public class Board implements BoardInterface {
         this.board = board;
         this.meetingPointCol = meetingPointCol;
         this.meetingPointRow = meetingPointRow;
-        this.size = board.length;
+        this.size = board[0].length;
     }
 
     @Override
@@ -41,9 +39,7 @@ public class Board implements BoardInterface {
     }
 
     @Override
-    public int getMeetingPointRow() {
-        return this.meetingPointRow;
-    }
+    public int getMeetingPointRow() { return this.meetingPointRow; }
 
     @Override
     public void optimizationDone() {

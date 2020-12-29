@@ -1,5 +1,3 @@
-package main;
-
 import java.util.Optional;
 
 public interface BoardInterface {
@@ -15,7 +13,7 @@ public interface BoardInterface {
 	 * @param row wiersz
 	 * @return Informacja o pionku. Brak pionka oznacza pusty obiekt Optional.
 	 */
-	public Optional<PawnInterface> get( int col, int row );
+	public Optional<PawnInterface> get(int col, int row );
 	
 	/**
 	 * Metoda zwraca kolumnę, w której znajduje się punkt zborny.
