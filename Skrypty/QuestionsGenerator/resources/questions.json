@@ -1,0 +1,88 @@
+{
+  "title": "Test of random knowledge",
+  "date": "25.01.2021",
+  "questions" : [
+    {
+      "question": "Which one is correct team name in NBA?",
+      "options": [
+        "New York Bulls",
+        "Los Angeles Kings",
+        "Golden State Warriros",
+        "Huston Rocket"
+      ],
+      "answer": "Huston Rocket"
+    },
+    {
+      "question": "5 + 7 = ?",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "13"
+      ],
+      "answer": "12"
+    },
+    {
+      "question": "12 - 8 = ?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": "4"
+    },
+    {
+      "question": "What is the capital of Chile?",
+      "options": [
+        "Rodrigo",
+        "Santiago",
+        "Rio de Janeiro",
+        "El Toro"
+      ],
+      "answer": "Santiago"
+    },
+    {
+      "question": "What is the highest mountain in Britain?",
+      "options": [
+        "Ben Washington",
+        "Ben Nevis",
+        "Jon Nevis",
+        "Jerry Terins"
+      ],
+      "answer": "Ben Nevis"
+    },
+    {
+      "question": "How many countries still have the shilling as currency?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": "4"
+    },
+    {
+      "question": "What is the largest country in the world?",
+      "options": [
+        "USA",
+        "Russia",
+        "China",
+        "Republic of South Africa"
+      ],
+      "answer": "Russia"
+    },
+    {
+      "question": "What is the hottest continent on Earth?",
+      "options": [
+        "South America",
+        "Asia",
+        "Europe",
+        "Africa"
+      ],
+      "answer": "Africa"
+    }
+  ]
+}
+
+

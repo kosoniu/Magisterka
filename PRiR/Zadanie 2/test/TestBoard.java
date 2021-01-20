@@ -36,7 +36,7 @@ public class TestBoard {
 //        boolean ended = board.optimizationEnded;
 
 //        while(!ended) {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
 //            ended = board.optimizationEnded;
 //        }
 
@@ -56,16 +56,16 @@ public class TestBoard {
         pawnsBoard[2][1] = new Pawn( pawnsBoard, 2, 1);
         pawnsBoard[2][2] = new Pawn( pawnsBoard, 2, 2);
         pawnsBoard[1][2] = new Pawn( pawnsBoard, 1, 2);
-        pawnsBoard[3][0] = new Pawn( pawnsBoard, 3, 0);
-        pawnsBoard[3][1] = new Pawn( pawnsBoard, 3, 1);
-        pawnsBoard[3][2] = new Pawn( pawnsBoard, 3, 2);
-        pawnsBoard[3][3] = new Pawn( pawnsBoard, 3, 3);
-        pawnsBoard[0][3] = new Pawn( pawnsBoard, 0, 3);
-        pawnsBoard[1][3] = new Pawn( pawnsBoard, 1, 3);
-        pawnsBoard[2][3] = new Pawn( pawnsBoard, 2, 3);
-        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
-        pawnsBoard[5][1] = new Pawn( pawnsBoard, 5, 1);
-        pawnsBoard[5][3] = new Pawn( pawnsBoard, 5, 3);
+//        pawnsBoard[3][0] = new Pawn( pawnsBoard, 3, 0);
+//        pawnsBoard[3][1] = new Pawn( pawnsBoard, 3, 1);
+//        pawnsBoard[3][2] = new Pawn( pawnsBoard, 3, 2);
+//        pawnsBoard[3][3] = new Pawn( pawnsBoard, 3, 3);
+//        pawnsBoard[0][3] = new Pawn( pawnsBoard, 0, 3);
+//        pawnsBoard[1][3] = new Pawn( pawnsBoard, 1, 3);
+//        pawnsBoard[2][3] = new Pawn( pawnsBoard, 2, 3);
+//        pawnsBoard[5][0] = new Pawn( pawnsBoard, 5, 0);
+//        pawnsBoard[5][1] = new Pawn( pawnsBoard, 5, 1);
+//        pawnsBoard[5][3] = new Pawn( pawnsBoard, 5, 3);
 
         int meetingPointX = 8;
         int meetingPointY = 6;
@@ -79,7 +79,7 @@ public class TestBoard {
 //        boolean ended = board.optimizationEnded;
 //
 //        while(!ended) {
-            Thread.sleep(3000);
+            Thread.sleep(25000);
 //            ended = board.optimizationEnded;
 //        }
 
@@ -115,7 +115,7 @@ public class TestBoard {
 //        boolean ended = board.optimizationEnded;
 //
 //        while(!ended) {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
 //            ended = board.optimizationEnded;
 //        }
 
@@ -213,7 +213,7 @@ public class TestBoard {
 //        boolean ended = board.optimizationEnded;
 //
 //        while(!ended) {
-        Thread.sleep(2000);
+        Thread.sleep(10000);
 //            ended = board.optimizationEnded;
 //        }
 

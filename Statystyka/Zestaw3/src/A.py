@@ -103,37 +103,12 @@ ax1.set_ylabel("Ilość elementów w kolejce")
 # ax2
 elements_number = [i for i in range(10)]
 
-addingTimesPlot = ax2.scatter(addingTimes, elements_number)
+result = map(lambda x: x / 1000, tsi)
 
-for x,y in zip(addingTimes, elements_number):
-
-    label = f"{y}"
-
-    ax2.annotate(label, # this is the text
-                 (x,y), # this is the point to label
-                 textcoords="offset points", # how to position the text
-                 xytext=(0,5), # distance from text to points (x,y)
-                 ha='center')
-
-executionTimesPlot = ax2.scatter(executionTimes, elements_number)
-
-for x,y in zip(executionTimes, elements_number):
-
-    label = f"{y}"
-
-    ax2.annotate(label, # this is the text
-                 (x,y), # this is the point to label
-                 textcoords="offset points", # how to position the text
-                 xytext=(0,5), # distance from text to points (x,y)
-                 ha='center')
-
-ax2.legend((addingTimesPlot, executionTimesPlot),
-           ("Customer", "Worker"),
-           scatterpoints=1,
-           fontsize=8)
+executionTimesPlot = ax2.scatter(executionTimes, list(result))
 
 ax2.set_xlabel("Czas")
-ax2.set_ylabel("Numer elementu w kolejce")
+ax2.set_ylabel("Czas wykonania zadania")
 
 plt.tight_layout()
 plt.show()
