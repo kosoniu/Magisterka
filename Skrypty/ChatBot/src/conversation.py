@@ -15,6 +15,9 @@ class Conversation:
             database_uri='sqlite:///db.sqlite3',
             logic_adapters=[
                 {
+                    'import_path': 'covid_data_adapter.CovidDataAdapter'
+                },
+                {
                     "import_path": "chatterbot.logic.BestMatch",
                     "statement_comparison_function": chatterbot.comparisons.levenshtein_distance,
                     "response_selection_method": chatterbot.response_selection.get_first_response,
