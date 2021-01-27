@@ -1,249 +1,211 @@
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Optimizer implements OptimizerInterface {
 
-    private BoardInterface board;
-    private Set<PawnMover> movers;
+    private PawnMover currentPositions[][];
+    private PawnMover nextPositions[][];
     private int meetingPointCol;
     private int meetingPointRow;
+    private List<PawnMover> movers;
     private final Object lock = new Object();
-    private PawnMover[][] moversBoard;
 
     @Override
     public void setBoard(BoardInterface board) {
-        this.board = board;
+        int boardSize = board.getSize();
+        currentPositions = new PawnMover[boardSize][boardSize];
+        nextPositions = new PawnMover[boardSize][boardSize];
+        meetingPointCol = board.getMeetingPointCol();
+        meetingPointRow = board.getMeetingPointRow();
+        movers = new ArrayList<>();
 
-        this.meetingPointCol = board.getMeetingPointCol();
-        this.meetingPointRow = board.getMeetingPointRow();
-        this.movers = new HashSet<>();
-        moversBoard = new PawnMover[board.getSize()][board.getSize()];
-
-        int counter = 0;
-
-        for (int i = 0; i < board.getSize(); i++) {
-            for (int j = 0; j < board.getSize(); j++) {
-                Optional<PawnInterface> pawn = this.board.get(j, i);
-                if (pawn.isPresent()) {
-                    PawnMover pawnMover = new PawnMover(pawn.get(), j, i, counter);
-                    moversBoard[j][i] = pawnMover;
-                    counter++;
-                    pawnMover.setName("Watek: " + pawn.get().getID());
-                    try {
-                        pawnMover.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    movers.add(pawnMover);
-                    pawn.get().registerThread(pawnMover);
+        for(int i = boardSize - 1; i >= 0; i--) {
+            for(int j = 0; j < boardSize; j++) {
+                if(board.get(j, i).isPresent()) {
+//                    System.out.println("Pionek obecny na : " + j + " " + i);
+                    PawnMover mover = new PawnMover(j, i, board.get(j, i).get());
+                    mover.setName("Watek " + j + "" + i);
+                    currentPositions[j][i] = mover;
+                    movers.add(mover);
+                } else {
+                    currentPositions[j][i] = null;
                 }
             }
         }
 
-        board.optimizationStart();
-        movers.forEach(PawnMover::start);
+        movers.forEach(Thread::start);
     }
 
     @Override
     public void suspend() {
-        movers.forEach(PawnMover::suspendThread);
+
     }
 
     @Override
     public void resume() {
-        movers.forEach(PawnMover::resumeThread);
+
     }
 
     private class PawnMover extends Thread {
+        boolean finished;
+        int currentColPosition;
+        int currentRowPosition;
+        PawnInterface pawn;
+        Direction firstDirection;
+        Direction secondDirection;
 
-        private final PawnInterface pawn;
-        private int currentColPosition;
-        private int currentRowPosition;
-        private Boolean suspended;
-        private boolean finished;
-        private int id;
-        private List<PawnMover> waitingMovers;
-
-        PawnMover(PawnInterface pawn, int currentColPosition, int currentRowPosition, int id) {
+        public PawnMover(int currentPositionCol, int currentPositionRow, PawnInterface pawn) {
+            this.currentColPosition = currentPositionCol;
+            this.currentRowPosition = currentPositionRow;
             this.pawn = pawn;
-            this.currentColPosition = currentColPosition;
-            this.currentRowPosition = currentRowPosition;
-            this.suspended = false;
-            this.finished = false;
-            this.id = id;
-            this.waitingMovers = new ArrayList<>();
+
+            synchronized (lock) {
+                currentPositions[currentPositionCol][currentPositionRow] = this;
+            }
         }
 
         @Override
         public void run() {
-            while (!finished) {
-                int col = this.currentColPosition;
-                int row = this.currentRowPosition;
-
-                if (this.currentColPosition == meetingPointCol && this.currentRowPosition == meetingPointRow) {
+            while (true) {
+                if(currentColPosition == meetingPointCol && currentRowPosition == meetingPointRow) {
                     finished = true;
-                    break;
+                    return;
                 }
 
-                if (this.currentColPosition < meetingPointCol) {
-                    if (this.currentRowPosition < meetingPointRow) {
-                        checkIf2WayMovementIsPossible(col + 1, row, col, row + 1, "R", "D");
-                    } else if (this.currentRowPosition > meetingPointRow) {
-                        checkIf2WayMovementIsPossible(col + 1, row, col, row - 1, "R", "U");
-                    } else {
-                        checkIfMovementIsPossible(col + 1, row, "L");
-                    }
-                } else if (this.currentColPosition > meetingPointCol) {
-                    if (this.currentRowPosition < meetingPointRow) {
-                        checkIf2WayMovementIsPossible(col - 1, row, col, row + 1, "L", "D");
-                    } else if (this.currentRowPosition > meetingPointRow) {
-                        checkIf2WayMovementIsPossible(col - 1, row, col, row - 1, "L", "U");
-                    } else {
-                        checkIfMovementIsPossible(col - 1, row, "R");
-                    }
-                } else {
-                    if (this.currentRowPosition < meetingPointRow) {
-                        checkIfMovementIsPossible(col, row + 1, "U");
-                    } else {
-                        checkIfMovementIsPossible(col, row - 1, "D");
-                    }
-                }
-            }
+                updatePossibleDirections();
 
-            if (movers.stream().filter(mover -> !mover.finished).count() == 0) {
-                System.out.println("Optimization done");
-                board.optimizationDone();
-            }
-        }
+                int currentColPosition = this.currentColPosition;
+                int currentRowPosition = this.currentRowPosition;
 
-        public synchronized void suspendThread() {
-            System.out.println("Wstrzymuje prace watku: " + getName());
-            suspended = true;
-        }
+                int nextFirstMoveCol = firstDirection.getNextColPosition(currentColPosition);
+                int nextFirstMoveRow = firstDirection.getNextRowPosition(currentRowPosition);
 
-        public void resumeThread() {
+                int nextSecondMoveCol = -1;
+                int nextSecondMoveRow = -1;
 
-        }
-
-        private void wakeUpThreads() {
-            for (PawnMover mover : waitingMovers) {
-                synchronized (mover) {
-                    mover.notify();
-                }
-            }
-        }
-
-        private synchronized void movePawn(String direction) {
-            switch (direction) {
-                case "L":
-                    moveLeft();
-                    break;
-                case "R":
-                    moveRight();
-                    break;
-                case "U":
-                    moveUp();
-                    break;
-                case "D":
-                    moveDown();
-                    break;
-            }
-        }
-
-        private void moveLeft() {
-            this.currentColPosition = pawn.moveLeft();
-            moversBoard[this.currentColPosition][this.currentRowPosition] = this;
-            moversBoard[this.currentColPosition + 1][this.currentRowPosition] = null;
-        }
-
-        private void moveRight() {
-            this.currentColPosition = pawn.moveRight();
-            moversBoard[this.currentColPosition][this.currentRowPosition] = this;
-            moversBoard[this.currentColPosition - 1][this.currentRowPosition] = null;
-        }
-
-        private void moveUp() {
-            this.currentRowPosition = pawn.moveUp();
-            moversBoard[this.currentColPosition][this.currentRowPosition] = this;
-            moversBoard[this.currentColPosition][this.currentRowPosition + 1] = null;
-        }
-
-        private void moveDown() {
-            this.currentRowPosition = pawn.moveDown();
-            moversBoard[this.currentColPosition][this.currentRowPosition] = this;
-            moversBoard[this.currentColPosition][this.currentRowPosition - 1] = null;
-        }
-
-        private void checkIfMovementIsPossible(int col, int row, String direction) {
-            synchronized (lock) {
-                while (moversBoard[col][row] != null) {
-                    if (moversBoard[col][row] != null && movers.stream().filter(mover -> moversBoard[col][row].pawn.getID() == mover.pawn.getID()).findFirst().get().finished) {
-                        finished = true;
-                        System.out.println(getName() + " koncze prace");
-                        return;
-                    }
-//                    System.out.println(getName() + " czekam na: " + col + row);
-                    try {
-                        lock.wait();
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-//                    System.out.println(getName() + " budze sie");
+                if(secondDirection != null) {
+                    nextSecondMoveCol = secondDirection.getNextColPosition(currentColPosition);
+                    nextSecondMoveRow = secondDirection.getNextRowPosition(currentRowPosition);
                 }
 
-                if (!finished) {
-                    movePawn(direction);
+                Direction nextMove;
+                int nextPositionCol;
+                int nextPositionRow;
+
+                synchronized (lock) {
+                    while(true) {
+                        if(nextPositions[nextFirstMoveCol][nextFirstMoveRow] == null && currentPositions[nextFirstMoveCol][nextFirstMoveRow] == null) {
+                            nextPositionCol = nextFirstMoveCol;
+                            nextPositionRow = nextFirstMoveRow;
+                            nextMove = firstDirection;
+                            nextPositions[nextPositionCol][nextPositionRow] = this;
+                            break;
+                        } else if(nextSecondMoveCol >= 0 && nextSecondMoveRow >= 0) {
+                            if(nextPositions[nextSecondMoveCol][nextSecondMoveRow] == null && currentPositions[nextSecondMoveCol][nextSecondMoveRow] == null) {
+                                nextPositionCol = nextSecondMoveCol;
+                                nextPositionRow = nextSecondMoveRow;
+                                nextMove = secondDirection;
+                                nextPositions[nextPositionCol][nextPositionRow] = this;
+                                break;
+                            }
+                        }
+
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                move(nextMove);
+
+                synchronized (lock) {
+                    nextPositions[nextPositionCol][nextPositionRow] = null;
+                    currentPositions[nextPositionCol][nextPositionRow] = this;
+                    currentPositions[currentColPosition][currentRowPosition] = null;
                     lock.notifyAll();
                 }
             }
+
         }
 
-        private synchronized void checkIf2WayMovementIsPossible(int x1, int y1, int x2, int y2, String firstDirection, String secondDirection) {
-            synchronized (lock) {
-                while (moversBoard[x1][y1] != null && moversBoard[x2][y2] != null) {
-                    if (checkIfIsOnFinalPosition(x1, y1, x2, y2)) {
-                        finished = true;
-                        System.out.println(getName() + " koncze prace");
-                        return;
-                    }
-
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (moversBoard[x1][y1] == null) {
-                    if (!finished) {
-                        movePawn(firstDirection);
-                        lock.notifyAll();
-                    }
-                } else if (moversBoard[x2][y2] == null) {
-                    if (!finished) {
-                        movePawn(secondDirection);
-                        lock.notifyAll();
-                    }
-                }
+        private void move(Direction direction) {
+            switch (direction){
+                case DOWN:
+                    currentRowPosition = pawn.moveDown();
+                    break;
+                case UP:
+                    currentRowPosition = pawn.moveUp();
+                    break;
+                case LEFT:
+                    currentColPosition = pawn.moveLeft();
+                    break;
+                case RIGHT:
+                    currentColPosition = pawn.moveRight();
+                    break;
             }
         }
 
-        private boolean checkIfIsOnFinalPosition(int x1, int y1, int x2, int y2) {
-            boolean finishedOneDirection;
-            boolean finishedSecondDirection;
-
-            if(moversBoard[x1][y1] != null && moversBoard[x2][y2] != null) {
-                finishedOneDirection = movers.stream().filter(mover -> moversBoard[x1][y1].pawn.getID() == mover.pawn.getID()).findFirst().get().finished;
-                finishedSecondDirection = movers.stream().filter(mover -> moversBoard[x2][y2].pawn.getID() == mover.pawn.getID()).findFirst().get().finished;
+        private void updatePossibleDirections() {
+            if (this.currentColPosition < meetingPointCol) {
+                if (this.currentRowPosition < meetingPointRow) {
+                    firstDirection = Direction.RIGHT;
+                    secondDirection = Direction.UP;
+                } else if (this.currentRowPosition > meetingPointRow) {
+                    firstDirection = Direction.RIGHT;
+                    secondDirection = Direction.DOWN;
+                } else {
+                    firstDirection = Direction.RIGHT;
+                    secondDirection = null;
+                }
+            } else if (this.currentColPosition > meetingPointCol) {
+                if (this.currentRowPosition < meetingPointRow) {
+                    firstDirection = Direction.LEFT;
+                    secondDirection = Direction.UP;
+                } else if (this.currentRowPosition > meetingPointRow) {
+                    firstDirection = Direction.LEFT;
+                    secondDirection = Direction.DOWN;
+                } else {
+                    firstDirection = Direction.LEFT;
+                    secondDirection = null;
+                }
             } else {
-                return false;
+                if (this.currentRowPosition < meetingPointRow) {
+                    firstDirection = Direction.UP;
+                } else {
+                    firstDirection = Direction.DOWN;
+                }
+                secondDirection = null;
             }
+        }
+    }
 
-            return finishedOneDirection && finishedSecondDirection;
+    enum Direction {
+        LEFT(-1, 0),
+        RIGHT(+1, 0),
+        UP(0, +1),
+        DOWN(0, -1);
+
+        final int deltaCol;
+        final int deltaRow;
+
+        Direction(int deltaCol, int deltaRow) {
+            this.deltaCol = deltaCol;
+            this.deltaRow = deltaRow;
         }
 
+        public int getNextColPosition(int colPosition) {
+            return colPosition + deltaCol;
+        }
+
+        public int getNextRowPosition(int rowPosition) {
+            return rowPosition + deltaRow;
+        }
     }
+
+
+
+
 }
 
 

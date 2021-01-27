@@ -71,13 +71,13 @@ public class Pawn implements PawnInterface {
             e.printStackTrace();
         }
 
-        if(board[colPosition][rowPosition - 1] != null) {
+        if(board[colPosition][rowPosition + 1] != null) {
             System.out.println("BLEDNE PRZESUNIECIE DO GORY!");
         }
 
-        board[colPosition][rowPosition - 1] = this;
+        board[colPosition][rowPosition + 1] = this;
         board[colPosition][rowPosition] = null;
-        rowPosition -= 1;
+        rowPosition += 1;
 
         return rowPosition;
     }
@@ -92,13 +92,13 @@ public class Pawn implements PawnInterface {
             e.printStackTrace();
         }
 
-        if(board[colPosition][rowPosition + 1] != null) {
-            System.out.println("BLEDNE PRZESUNIECIE DO GORY!");
+        if(board[colPosition][rowPosition - 1] != null) {
+            System.out.println("BLEDNE PRZESUNIECIE NA DOL!");
         }
 
-        board[colPosition][rowPosition + 1] = this;
+        board[colPosition][rowPosition - 1] = this;
         board[colPosition][rowPosition] = null;
-        rowPosition += 1;
+        rowPosition -= 1;
 
         return rowPosition;
     }

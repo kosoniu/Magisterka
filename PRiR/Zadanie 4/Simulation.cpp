@@ -8,7 +8,16 @@
 
 using namespace std;
 
+drand48_data drand_buf;
+#pragma omp threadprivate(drand_buf)
+
 Simulation::Simulation() {
+#pragma omp parallel
+    {
+        int threadNumber = omp_get_thread_num();
+        int seed = 1202107158 + threadNumber * 1999;
+        srand48_r(seed, &drand_buf);
+    }
 }
 
 void Simulation::setRandomNumberGenerator(RandomNumberGenerator *randomNumberGenerator) {
@@ -40,11 +49,21 @@ void Simulation::calcInitialTotalEnergy() {
 // do zrĂłwnoleglenia
 double Simulation::calcTotalEnergy() {
     double Etot = 0.0;
-#pragma omp parallel for collapse(2)
-    for (int row = 2; row < size - 2; row++) {
-        for (int col = 2; col < size - 2; col++) {
-            Etot += energyCalculator->calc(data, size, row, col);
+
+#pragma omp parallel shared(Etot)
+    {
+        double tmpEtot = 0.0;
+
+#pragma omp for collapse(2)
+        for (int row = 2; row < size - 2; row++) {
+            for (int col = 2; col < size - 2; col++) {
+                tmpEtot += energyCalculator->calc(data, size, row, col);
+            }
         }
+
+#pragma omp atomic
+        Etot += tmpEtot;
+
     }
 
     return Etot * 0.5;
@@ -53,6 +72,7 @@ double Simulation::calcTotalEnergy() {
 int Simulation::similarNeighbours(int col, int row, int delta, double limit) {
     double middle = Helper::getValue(data, size, row, col);
     int neighbours = 0;
+
     for (int rowd = -delta; rowd <= delta; rowd++)
         for (int cold = -delta; cold <= delta; cold++) {
             if (cos(Helper::getValue(data, size, row + rowd, col + cold) - middle) > limit)
@@ -69,21 +89,20 @@ double Simulation::calcAvgNumberOfSimilarNeighbours(int neighboursDistance, doub
     maxNeighbours = 0;
     int neighboursTmp;
 
-#pragma omp parallel private( neighboursTmp )
+#pragma omp parallel private( neighboursTmp ) shared(sum, neighbours)
     {
 #pragma omp for collapse(2)
         for (int row = neighboursDistance; row < size - neighboursDistance; row++) {
             for (int col = neighboursDistance; col < size - neighboursDistance; col++) {
-                neighboursTmp = similarNeighbours(col, row, neighboursDistance, limit);
-                sum += neighboursTmp;
+                    neighboursTmp = similarNeighbours(col, row, neighboursDistance, limit);
 #pragma omp critical
                 {
+                    sum += neighboursTmp;
                     if (neighboursTmp > maxNeighbours) {
                         maxNeighbours = neighboursTmp;
                     }
+                    neighbours++;
                 }
-
-                neighbours++;
             }
         }
     }
@@ -108,16 +127,11 @@ void Simulation::setDataToChangeInSingleStep(int dataToChange) {
 
 // do zrĂłwnoleglenia - konieczna wymiara generatora liczb losowych na drand48_r
 void Simulation::generateDataChange() {
-    struct drand48_data drand_buf;
-    int seed;
-    double delta, row, col;
-
-#pragma omp parallel private( seed, row, col, delta, drand_buf )
+#pragma omp parallel
     {
-        seed = 1202107158 + omp_get_thread_num() * 1999;
-        srand48_r (seed, &drand_buf);
+        double delta, row, col;
 
-#pragma omp for
+#pragma omp for schedule(static, 8)
         for (int i = 0; i < dataToChange; i++) {
             drand48_r (&drand_buf, &row);
             drand48_r (&drand_buf, &col);
@@ -127,8 +141,6 @@ void Simulation::generateDataChange() {
             this->delta[i] = maxChange * (1.0 - 2.0 * delta);
         }
     }
-
-
 }
 
 void Simulation::changeData() {

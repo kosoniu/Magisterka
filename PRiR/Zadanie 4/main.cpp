@@ -1,10 +1,15 @@
 #include <iostream>
 #include <iomanip>
-#include "Simulation.h"
+#include <sys/time.h>
 #include "EnergyCalculator.h"
 #include "RandomNumberGenerator.h"
 #include "Helper.h"
 #include "MonteCarlo.h"
+
+#define ____SERIAL
+
+#include "SimulationS.h"
+#include "Simulation.h"
 
 using namespace std;
 
@@ -25,14 +30,24 @@ void prepareData(double *data, int size, RandomNumberGenerator *rng)
         }
 }
 
+int toInt(char *arg)
+{
+    return atoi(arg);
+}
+
+double toDouble(char *arg)
+{
+    return atof(arg);
+}
+
 int main(int ac, char **av)
 {
-    const int size = 1004;
+    const int size = 700;
 
     Simulation *s = new Simulation();
     EnergyCalculator *ec = new EnergyCalculator();
     s->setEnergyCalculator(ec);
-    s->setDataToChangeInSingleStep(128);
+    s->setDataToChangeInSingleStep(25000);
 
     RandomNumberGenerator *rng = new RandomNumberGenerator();
 
@@ -49,7 +64,7 @@ int main(int ac, char **av)
 
     cout << "TotalEnergy = " << s->getTotalEnergy() << endl;
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 5; i++) {
         s->singleStep();
         cout << "TotalEnergy          = " << s->getTotalEnergy() << endl;
         cout << "<Similar neighbours> = " << s->calcAvgNumberOfSimilarNeighbours(4, 0.8 ) << endl;
